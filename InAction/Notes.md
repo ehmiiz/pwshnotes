@@ -204,5 +204,75 @@ Formatting:
 - Piping to Out-Null does the same as invoking $null but 40 times slower
 
 
-## Working with Types
+## Working with (object) Types
 
+- Type
+  - Description of an object
+- Class
+  - Keyword for creating a type in PowerShell
+- Property
+  - piece of data describing the object
+- Method
+  - Define behaviors on a class
+- Member
+  - Generic term for Property and Method
+- Event
+  - Method that based on conditions might be invoked
+- Generic Type
+  - Contains instances of other types
+
+
+Strings:
+
+String literals:
+
+- Single-quoted strings
+- Double-quoted strings
+- Single-quoted here-strings
+- Double-quoted here-strings
+
+Split up like this because of the expression/command-mode
+
+Strings in PowerShell are a sequence of 16-bit unicode characters
+Directly implemented using System.String type (.net)
+
+
+Force single quote variable expansion:
+`$ExecutionContext.InvokeCommand.ExpandString( 'a is $var' )`
+
+Here-String example:
+```powershell
+$a = @"
+One is "1"
+Two is '2'
+Three is $(2+1)
+The date is "$(Get-Date)"
+"@
+```
+
+Here-strings are useful when:
+- Generating output for another program
+- Used to embed large chunks of text inline in a script
+- With Add-Type, to generate C#, or C code
+- CSS, to set a specific style
+
+
+Numbers:
+
+- int, system.int32
+  - 1, 0x1FE4
+- long, system.int64
+  - 100000000
+- double, system.double
+  - 1.1, 1e3
+- single, system.single
+- float, system.single (float is a class in single namespace)
+- decimal, system.decimal, 1.123d
+
+Multiplier suffixes
+
+- kb or KB
+- mb or MB
+- gb or GB
+- tb or TB
+- pb or PB
