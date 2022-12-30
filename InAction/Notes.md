@@ -14,7 +14,6 @@ PowerShell is:
 - Optimal DevOps tool on Windows
 - A tool for admins & developers
 
-
 What is a shell?
 
 - Enables access to the Operating Systems functions
@@ -31,7 +30,6 @@ What is a scripting language?
 - Helps you develop larger scripts
 - Runs with more efficiency then a shell language
 - More oriented towards writing an application rather then typing a command
-
 
 What is PowerShell?
 
@@ -103,8 +101,7 @@ Type of "commands" in PowerShell:
   - Starts its own process
   - Parameter processing by itself (can missmatch PowerShell)
 
-
-## Elastic type system:
+## Elastic type system
 
 - To turn a very verbose language into a shell language
 - Aliases (dir -> get-childitem)
@@ -112,9 +109,13 @@ Type of "commands" in PowerShell:
 - Convenience aliases (Get-ChildItem -> gci, Invoke-Item -> ii, etc)
 - Aliases does not contain parameters (if more advanced, use functions/scripts)
 - The elastic type system lets you do:
-   ```powershell
-  gcm|?{$_.parametersets.count -gt 3}|fl name
-   ```
+  
+```powershell
+
+gcm|?{$_.parametersets.count -gt 3}|fl name
+
+```
+
    and
   
   ```powershell
@@ -122,6 +123,7 @@ Type of "commands" in PowerShell:
     Where-Object {$_.ParameterSets.Count -gt 3} |
         Format-List Name
   ```
+
 - Type out something fast (interactively), or
 - Write code that you/other people can read easily
 - Parameter Alias (To combat versioning issues)
@@ -132,7 +134,7 @@ PowerShell Parser
 - Script text breaks into tokens by tokenizer (lexical analyzer)
 - A token can be, symbol, number, keyword, variable
 - Processed into structures in the language through syntactic analysis
-- [Windows PowerShell Language Specification Version 3.0](https://www.microsoft.com/en-us/download/confirmation.aspx?id=36389)
+- [Windows PowerShell Language Specification Version 3.0](https://www.microsoft.com/download/confirmation.aspx?id=36389)
 - Single quoting turns a token with special meaning into a string `Write-Output '-InputObject'`
 - Backquote character ie: 'Program` files'
 - Escape character: $v = files
@@ -154,23 +156,21 @@ Statement termination:
 - ;
 - New line (If previous text is syntactically complete, else it's treated as whitespace)
 
-
 If backtick escape is the last character, the newline will be reated as a simple breaking space instead of a new line
-
 
 Pipeline:
 
 - PowerShell was the first language to pass objects through its pipeline, previous shells passed only strings
 - Streaming behavior (prints asap, not waiting for the whole result set)
-- Parser figures out what cmdlets and parameters to work with, pipeline processor 
+- Parser figures out what cmdlets and parameters to work with, pipeline processor
 
 Pipeline processor:
+
 - runs begin block on all commands used simontenously
 - then runs the process block on the first cmdlet, and moves on with process on the 2nd cmdlet
 - If objects are generated at any point, it gets passed down the pineline
-- If the last cmdlet generates output, its passed back to the powershell host 
+- If the last cmdlet generates output, its passed back to the powershell host
 - The host is then responsible for further processing
-
 
 Parameters and Parameter binder
 
@@ -190,9 +190,7 @@ Trace-Command -Name ParameterBinding -Option All `
 -Expression { 123 | Write-Output } -PSHost
 ```
 
-
 ( Description at page 38 )
-
 
 Formatting:
 
@@ -202,7 +200,6 @@ Formatting:
 - Format-Custom, create specific formatting rules that are not table/list
 - Out-Default prints to host
 - Piping to Out-Null does the same as invoking $null but 40 times slower
-
 
 ## Working with (object) Types
 
@@ -221,7 +218,6 @@ Formatting:
 - Generic Type
   - Contains instances of other types
 
-
 Strings:
 
 String literals:
@@ -236,11 +232,11 @@ Split up like this because of the expression/command-mode
 Strings in PowerShell are a sequence of 16-bit unicode characters
 Directly implemented using System.String type (.net)
 
-
 Force single quote variable expansion:
 `$ExecutionContext.InvokeCommand.ExpandString( 'a is $var' )`
 
 Here-String example:
+
 ```powershell
 $a = @"
 One is "1"
@@ -251,11 +247,11 @@ The date is "$(Get-Date)"
 ```
 
 Here-strings are useful when:
+
 - Generating output for another program
 - Used to embed large chunks of text inline in a script
 - With Add-Type, to generate C#, or C code
 - CSS, to set a specific style
-
 
 Numbers:
 
@@ -276,3 +272,136 @@ Multiplier suffixes
 - gb or GB
 - tb or TB
 - pb or PB
+
+Dictionaries and hashtables:
+
+- Hashtable initiation starts with '@{' and ends with }
+- Property notation: $hash.firstname
+- Array access notation $hash['firstname','lastname']
+- $hash[$hash.keys] will access all values from the keys
+- or use $hash.Values to access all values from the keys
+- To iterate over key-value pairs, call the .GetEnumerator() method first
+- PowerShell treats hashtables as scalar objects (pointer-to-member)
+- To create an ordered hashtable, cast the ordered class before assigning
+- Hashtables are references (if you assign it to another variable, its in sync with each other)
+- use .clone() to copy a hashtable, without the reference link
+
+Arrays:
+
+- PowerShell has no array initiation, its dynamic
+- Arrays in PowerShell are created using the object[] class
+- Call the GetType() method to view the type name
+- Polymorphic by default (can store any object type) ($a = 1, "string", 1.24d)
+- As with hashtables, arrays are referenced ($a=$b will sync updates)
+- If you update $b, the reference will be replaced with a copy of $a's content + what you added, and no longer update
+
+Type literals:
+
+- Used to specify a particular type
+- Used to cast (convert object to specific type)
+- Part of type-constrained variable declaration
+- As an object
+- Static types methods are private (can only be invoked on already created object)
+- .Net types provide rich functionality, best to re-use a type before creating something yourself
+
+Type Conversions:
+
+- Standard (built in) conversions is done by PowerShell Engine (not normal .net type-conversion)
+
+## Operators and Expressions
+
+Arithmetic operators:
+
++, -, *, /, %
+
+Assignment operators:
+
+=, +=, -=, *=, /=, %=
+
+Comparison operators:
+
+eq, ne, gt, ge, ,lt ,le
+
+ieq..
+
+ceq..
+
+Containment operators:
+
+contains, notcontains, in notin
+icontains
+ccontains
+
+Pattern-matching and text-manipulation operators:
+-like, notlike, match, notmatch, replace, split, ilike, inotlike, imatch, inotmatch, ireplace, isplit, cline, cnotlike, cmatch, cnotmatch, creplace, csplit, join
+
+Local and bitwise operators:
+-and, -or, not, xor, shl, band, nor, bnot, bxor, shr
+
+- Works on many types of objects (polymorphic)
+
+Addition operator:
+
+- Array concatenation
+- Hashtable "concatenation"
+- "Left-hand" rule, if multiple operators, left one determines the operation
+
+Multiple types addition behavior:
+
+```powershell
+
+$a = [int[]](1,2,3,4) # creates an array with type constrained elements (int)
+$a[0] = 'hej' # will fail because of element being type constrained
+
+# You can create a new variable that is of type Object[] that is not  type constrained:
+
+$a = $a + 'hej'
+$a[0] = 'hej' now works ($a.gettype())
+
+```
+
+Comparison operators:
+
+- ieq, ceq, case-insensitive, case-sensitive
+- ieq and eq has the same behavior, ieq was designed to allow script authors implicitly express what they
+- PowerShell does not have symbols as comparison (==, >, <) because of the i/o redirection operators, "asd" > asd.txt was prioritized
+
+- Comparison of different types will type-convert from the left:
+  - 123 -eq '123' , converts '123' to int 123, etc
+
+Using comparison operators with collections:
+
+if left operand is array or collection, comparison will return only the elements that match the right operand.
+
+1,2,3,4 -eq 3 outputs: 3
+
+- contains & in returns boolean value if any element in the array or collection matches the corresponding operand:
+- contains, array CONTAINS value
+- in, value is IN array
+
+Wildcard Operators:
+
+- ? matches any single character
+- [A-D*] matches anything that starts with a,b,c,d
+- [AD*], matches anything that starts with A or D
+
+Regular Expressions 👀:
+
+- Wildcard operators gets translated to corresponding regex internally
+- ,*; in regex is wildcard, and any single character (?), is a dot (.)
+- Regex operators in powershell are: Match, replace, split
+- Match operator generates a variable $Matches, that contains elements of what matched
+- Use parentheses around expression when you -join, if one string is desired
+
+- Split unary form splits on whitespace
+- Split binary form (with args) can take multiple arguments
+- Delimiter, Amount to split, mode (SimpleMatch)
+- Split modes: SimpleMatch, IgnoreCase, CultureInvariant, IgnorePatternWhiteSpace, MultiLine, SingleLine, ExplicitCapture
+
+- Where() method is faster then Where-Object
+- ForEach() method is NOT faster then foreach statement
+
+## Advanced Operators & Variables
+
+- The greatest challenge to any thinker is stating the problem in a way that will allow a solution.
+
