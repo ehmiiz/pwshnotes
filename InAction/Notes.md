@@ -403,5 +403,23 @@ Regular Expressions 👀:
 
 ## Advanced Operators & Variables
 
-- The greatest challenge to any thinker is stating the problem in a way that will allow a solution.
+#### The greatest challenge to any thinker is stating the problem in a way that will allow a solution.
 
+- The Is & As operators are type operators, -is verifies specific types, -as converts a type, like a cast but more flexible since you can specify any string on runtime (instead of the fixed type that a cast provides).
+
+- -As returns null if cast fails
+
+Unary operators takes one argument, binary takes two
+
+Array slicing: $a = 1..10; $a = $a[0,2,3]
+
+Indexing the last element of an array: $a[-1]
+
+Format operator: -f, display a number as percentage: '{0:p}' -f .50
+
+PowerShell variables can be set read-only or constant using Set-Variable -Option
+
+
+## Flow control in scripts
+
+195 / 906
